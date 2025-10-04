@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.11-bookworm
 WORKDIR /app
 COPY . /app
 
@@ -10,12 +10,15 @@ RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
        curl \
        unzip \
+       groff \
+       less \
        ca-certificates \
-    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && update-ca-certificates
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
     && unzip awscliv2.zip \
     && ./aws/install \
-    && rm -rf awscliv2.zip aws \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf awscliv2.zip aws
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
